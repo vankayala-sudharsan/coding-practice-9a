@@ -29,10 +29,10 @@ app.post("/register", async (request, response) => {
   const userQuery = `SELECT * FROM user WHERE username = '${username}';`;
   const isUsernmaeExist = await db.get(userQuery);
   if (isUsernmaeExist !== undefined) {
-    response.status = 400;
+    response.status(400);
     response.send("User already exists");
   } else if (userData.password.length < 5) {
-    response.status = 400;
+    response.status(400);
     response.send("Password is too short");
   } else {
     const createUserquery = `INSERT INTO user (username,name,password,gender,location)
@@ -40,7 +40,7 @@ app.post("/register", async (request, response) => {
           '${username}','${name}','${hashedPassword}','${gender}','${location}'
       );`;
     await db.run(createUserquery);
-    response.status = 200;
+    response.status(200);
     response.send("User created successfully");
   }
 });
@@ -52,7 +52,7 @@ app.post("/login", async (request, response) => {
   const isUserexist = await db.get(getUserQuery);
 
   if (isUserexist === undefined) {
-    response.status = 400;
+    response.status(400);
     response.send("Invalid user");
   } else {
     const isPasswordMatched = await bcrypt.compare(
@@ -60,10 +60,10 @@ app.post("/login", async (request, response) => {
       isUserexist.password
     );
     if (isPasswordMatched) {
-      response.status = 200;
+      response.status(200);
       response.send("Login success!");
     } else {
-      response.status = 400;
+      response.status(400);
       response.send("Invalid password");
     }
   }
@@ -79,16 +79,16 @@ app.put("/change-password", async (request, response) => {
     userinDb.password
   );
   if (ispasswordMatched === false) {
-    response.status = 400;
+    response.status(400);
     response.send("Invalid current password");
   } else if (newPassword.length < 5) {
-    response.status = 400;
+    response.status(400);
     response.send("Password is too short");
   } else {
     const newHashedpassword = await bcrypt.hash(newPassword, 10);
     const query = `UPDATE user SET password = '${newHashedpassword}' WHERE username = '${username}';`;
     await db.run(query);
-    response.status = 200;
+    response.status(200);
     response.send("Password updated");
   }
 });
